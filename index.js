@@ -163,6 +163,12 @@ async function run() {
             const result = await reviewsCollection.insertOne(review);
             res.json(result);
         })
+        //reviews api
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewsCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        })
 
     } finally {
         // await client.close();
