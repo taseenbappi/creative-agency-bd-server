@@ -1,5 +1,6 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
+const ObjectID = require('mongodb').ObjectID;
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
@@ -21,6 +22,8 @@ async function run() {
         await client.connect();
         const database = client.db("creativeAgencyBD");
         const usersCollection = database.collection("users");
+        const placedOrderCollection = database.collection("placedOrder");
+        const servicesCollection = database.collection("services");
 
         //getting users info api
         app.get("/users", async (req, res) => {
@@ -29,7 +32,7 @@ async function run() {
             const result = await users.toArray();
             res.json(result);
         })
-        //getting users info api
+        //getting exits user info api
         app.get("/users/:email", async (req, res) => {
 
             const email = req.params.email;
@@ -48,6 +51,31 @@ async function run() {
 
             const user = req.body;
             const result = await usersCollection.insertOne(user);
+            res.json(result);
+        })
+        //getting all services
+        app.get('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectID(id) };
+            console.log(query);
+            const service = await servicesCollection.findOne(query);
+            res.json(service);
+
+        })
+        //getting all services
+        app.get('/services', async (req, res) => {
+            const services = servicesCollection.find({});
+            const result = await services.toArray();
+            res.json(result);
+        })
+
+
+        //oders releted api
+
+        //placedOrder api
+        app.post('/placedOrder', async (req, res) => {
+            const orderInfo = req.body;
+            const result = await placedOrderCollection.insertOne(orderInfo);
             res.json(result);
         })
 
