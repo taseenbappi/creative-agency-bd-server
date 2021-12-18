@@ -24,6 +24,7 @@ async function run() {
         const usersCollection = database.collection("users");
         const placedOrderCollection = database.collection("placedOrder");
         const servicesCollection = database.collection("services");
+        const reviewsCollection = database.collection("reviews");
 
         //getting users info api
         app.get("/users", async (req, res) => {
@@ -76,6 +77,12 @@ async function run() {
         app.post('/placedOrder', async (req, res) => {
             const orderInfo = req.body;
             const result = await placedOrderCollection.insertOne(orderInfo);
+            res.json(result);
+        })
+        //reviews api
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
             res.json(result);
         })
 
