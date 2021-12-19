@@ -144,13 +144,14 @@ async function run() {
             const result = await orderList.toArray();
             res.json(result);
         })
-        // getting order api
-        app.get('/order/:email', async (req, res) => {
-            const email = req.params.email;
+        // getting orderlist by mail api
+        app.get('/user/order', async (req, res) => {
+            const email = req.query.email;
+            console.log(email);
             const query = { email: email };
-            const orderList = await orderCollection.findOne(query);
-            // const result = await orderList.toArray();
-            res.json(orderList);
+            const cursor = orderCollection.find(query);
+            const result = await cursor.toArray();
+            res.json(result);
         })
 
 
