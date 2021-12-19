@@ -144,6 +144,14 @@ async function run() {
             const result = await orderList.toArray();
             res.json(result);
         })
+        // getting order api
+        app.get('/order/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const orderList = await orderCollection.findOne(query);
+            // const result = await orderList.toArray();
+            res.json(orderList);
+        })
 
 
         //////////////////reaview api//////////////////////////////////////////////
