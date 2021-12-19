@@ -53,6 +53,20 @@ async function run() {
             }
 
         })
+        //getting exits user is admin api
+        app.get("/users/admin/:email", async (req, res) => {
+
+            const email = req.params.email;
+            const query = { email: email };
+            const users = await usersCollection.findOne(query);
+            if (users?.role === "admin") {
+                res.json({ message: true });
+            }
+            else {
+                res.json({ message: false });
+            }
+
+        })
 
         // update user to admin api
         app.put("/users/admin", async (req, res) => {
