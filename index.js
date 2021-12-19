@@ -20,11 +20,16 @@ async function run() {
     try {
 
         await client.connect();
+
+        // database collection
         const database = client.db("creativeAgencyBD");
         const usersCollection = database.collection("users");
         const placedOrderCollection = database.collection("placedOrder");
         const servicesCollection = database.collection("services");
         const reviewsCollection = database.collection("reviews");
+        const orderCollection = database.collection("order");
+
+        //////////////////all users api//////////////////////////////////
 
         //getting users info api
         app.get("/users", async (req, res) => {
@@ -33,6 +38,7 @@ async function run() {
             const result = await users.toArray();
             res.json(result);
         })
+
         //getting exits user info api
         app.get("/users/:email", async (req, res) => {
 
@@ -45,8 +51,23 @@ async function run() {
             else {
                 res.json({ message: false });
             }
-            // res.json(users);
+
         })
+
+        // update user to admin api
+        app.put("/users/admin", async (req, res) => {
+            const email = req.body;
+            const filter = { email: email.email };
+            const options = { upsert: true };
+            const updateUser = {
+                $set: {
+                    role: "admin"
+                }
+            };
+            const result = await usersCollection.updateOne(filter, updateUser, options);
+            res.json(result);
+        })
+
         //added user info 
         app.post("/users", async (req, res) => {
 
@@ -54,15 +75,18 @@ async function run() {
             const result = await usersCollection.insertOne(user);
             res.json(result);
         })
-        //getting all services
+
+        //////////////////all services api//////////////////////////////////////
+
+        //getting specific services
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectID(id) };
-            console.log(query);
             const service = await servicesCollection.findOne(query);
             res.json(service);
 
         })
+
         //getting all services
         app.get('/services', async (req, res) => {
             const services = servicesCollection.find({});
@@ -70,15 +94,46 @@ async function run() {
             res.json(result);
         })
 
-
-        //oders releted api
-
-        //placedOrder api
-        app.post('/placedOrder', async (req, res) => {
-            const orderInfo = req.body;
-            const result = await placedOrderCollection.insertOne(orderInfo);
+        //insert services api
+        app.post("/services", async (req, res) => {
+            const service = req.body;
+            const result = await servicesCollection.insertOne(service);
             res.json(result);
         })
+
+
+        //////////////////all order releted api//////////////////////////////////
+
+        //placedOrder post api
+        app.post('/placedOrder', async (req, res) => {
+            const servicesList = req.body;
+            const result = await placedOrderCollection.insertOne(servicesList);
+            res.json(result);
+        })
+        //placedOrder getting api
+        app.get('/placedOrder', async (req, res) => {
+            const servicesList = placedOrderCollection.find({});
+            const result = await servicesList.toArray();
+            res.json(result);
+        })
+
+        //insert Order post api
+        app.post('/order', async (req, res) => {
+            const orderInfo = req.body;
+            const result = await orderCollection.insertOne(orderInfo);
+            res.json(result);
+        })
+
+        // getting order api
+        app.get('/order', async (req, res) => {
+            const orderList = orderCollection.find({});
+            const result = await orderList.toArray();
+            res.json(result);
+        })
+
+
+        //////////////////reaview api//////////////////////////////////////////////
+
         //reviews api
         app.post('/reviews', async (req, res) => {
             const review = req.body;
